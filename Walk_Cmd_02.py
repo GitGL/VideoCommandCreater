@@ -5,11 +5,22 @@ If have cmd, then read cmd
 import os
 import datetime
 
-filePath = "/media/hustrc/Media03"
-#filePath = "/media/hustrc/LinuxData/Download/Video"
+import commands
 
+filePath = "/media/hustrc/Media03/32-TV/01-Korean/[点金神手(Midas)]"
+# filePath = "/media/guolei/L-Data/TV"
+
+# editPath = "/media/guolei/L-Data/TV/CMD"
 editPath = "/media/hustrc/LinuxData/Download/Factory"
 
+def GetVideoDuration(videoFile):
+    
+    cmd = "ffmpeg -i " + videoFile + " 2>&1 | grep 'Duration' | cut -d ' ' -f 4 | sed s/,//"
+    # print("This is ffmpeg cmd=================================: %s" %cmd)
+    (status, output) = commands.getstatusoutput(cmd)
+    # print(output)
+    return output
+    
 def GetTime(initTimeStr):
     """
     # if is "" pass
@@ -20,7 +31,7 @@ def GetTime(initTimeStr):
     """
     # Use Split " " and ":"
     timeUnits = initTimeStr.split(" ")
-    print(timeUnits)
+    # print(timeUnits)
     sTime = timeUnits[0]
     eTime = timeUnits[1]
     #
@@ -72,148 +83,213 @@ def GetTime(initTimeStr):
 
     cTime = cHourStr+":"+cMinuteStr+":"+cSecondStr
     
-    print(cTime)
+    # print(cTime)
     return sTime+" "+cTime
 
-open(editPath+"/cmdfactory", 'w').write("")
+def InitCmd():
+    open(editPath+"/cmdfactory", 'w').write("")
 
-for root, dirs, files in os.walk(filePath):
-    flgCMD = False
-    flgRmvb = False
-    cmdCount = 1
-    testFileCount =1
-    
-    for f in files:
-        fileName = f
-        print("%d File Name: %s" %(testFileCount,fileName))
-        #print("Full File Path: %s/%s\n" %(root,f))
-        fullFilePath = root + "/" + f
-        print("Full File Path: %s" %(fullFilePath))
-        flgCMDFile = False
+def DealFiles(dealStyle=1):
+    '''
+    Walk file path
+    Deal Style
+    1: CMD file
+    2: rmvb file
+    3: rmvb file delete pre part
+    '''
+    for root, dirs, files in os.walk(filePath):
+        flgCMD = False
+        flgRmvb = False
+        cmdCount = 1
+        testFileCount =1
         
-        # Search Cmd file
-        for fc in files:
-            if fc == "cmd":
-                # print("Dir: "+"%s/%s\n" %(root, f))
-                print("Fined cmd file")
-
-                cmdFile = open(root + "/cmd","r")
-                testLineCount =1
-                cmdLine = cmdFile.readline()
-                while cmdLine != "":
-                    print("%d TCMD Line: %s" %(testLineCount,cmdLine))
-
-                    formatCMDLine = cmdLine.strip()
-                    
-                    if formatCMDLine != "":
-                        if formatCMDLine in fileName:
-                            
-                            flgCMDFile = True
-                            #print("Line: " + cmdLine)
-                            cmdLine = cmdFile.readline()
-
-                            # Find all times
-                            countTime = 1
-                            while cmdLine != "":
-                                formatCMDLine = cmdLine.strip()
-                                if formatCMDLine =="":
-                                    pass
-                                elif formatCMDLine[2]!=":":
-                                    break
-                                else:
-                                    # Get Time
-                                    strTime = GetTime(formatCMDLine)
-                                    timeUnits = strTime.split(" ")
-                                    sTime = timeUnits[0]
-                                    cTime = timeUnits[1]
-                                    
-                                    # Write CMD
-                                    if ".rmvb" in f:
-                                        # Copy the to edit file to Factory
-                                        cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
-
-                                        # Deal with Vedio Step 1 => ts
-                                        veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb " + "-ss " + sTime + " -t " + cTime + " B.ts"
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
-
-                                        # Deal with Vedio Step 2 => mp4
-                                        veStr = "ffmpeg -i B.ts -an -vcodec copy C.mp4"
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
-
-                                        # Deal with Audio
-                                        auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 " + "-ss " + sTime + " -t " + cTime + " D.ogg"
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(auStr))
-
-                                        # Make mkv file
-                                        mkStr = '"mkvmerge" -o "'+editPath+'/E.mkv"  "--forced-track" "0:no" "-d" "0" "-A" "-S" "-T" \
-    "--no-global-tags" "--no-chapters" "(" "'+editPath+'/C.mp4" ")" "--forced-track" "0:no" "-a" "0" "-D" "-S" "-T" "--no-global-tags" \
-    "--no-chapters" "(" "'+editPath+'/D.ogg" ")" "--track-order" "0:0,1:0"'
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
-
-                                        # Rename and Remove file
-                                        reStr = "mv E.mkv " + fileName + ".mkv"
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
-                                        reStr = "rm A B.ts C.mp4 D.ogg"
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-
-                                    elif ".avi" in f:
-                                        cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                                + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                                        
-                                    elif ".mp4" in f:
-                                        cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                                + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                                    
-                                    elif ".mkv" in f:
-                                        cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                                + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
-                                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                                    
-                                cmdLine = cmdFile.readline()
-                                countTime += 1
-                                
-                    testLineCount += 1
-                    cmdLine = cmdFile.readline()
-
-        if flgCMDFile == False:
-            if ".rmvb" in f:
-                # Write CMD
-                # Copy the to edit file to Factory
-                cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
-
-                # Deal with Vedio Step 1 => ts
-                veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb B.ts"
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
-
-                # Deal with Vedio Step 2 => mp4
-                veStr = "ffmpeg -i B.ts -an -vcodec copy C.mp4"
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
-
-                # Deal with Audio
-                auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 D.ogg"
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(auStr))
-
-                # Make mkv file
-                mkStr = '"mkvmerge" -o "'+editPath+'/E.mkv"  "--forced-track" "0:no" "-d" "0" "-A" "-S" "-T" \
-    "--no-global-tags" "--no-chapters" "(" "/'+editPath+'/C.mp4" ")" "--forced-track" "0:no" "-a" "0" "-D" "-S" "-T" "--no-global-tags" \
-    "--no-chapters" "(" "'+editPath+'/D.ogg" ")" "--track-order" "0:0,1:0"'
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
-
-                # Rename and Removefile
-                reStr = "mv E.mkv " + fileName + ".mkv"
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
-                reStr = "rm A B.ts C.mp4 D.ogg"
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
-                open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                
-        testFileCount += 1
-
+        InitCmd()
+        
+        for f in files:
+            fileName = f
+            # print("%d File Name: %s" %(testFileCount,fileName))
+            #print("Full File Path: %s/%s\n" %(root,f))
+            fullFilePath = root + "/" + f
+            # print("Full File Path: %s" %(fullFilePath))
+            flgCMDFile = False
             
+            # Search Cmd file
+            for fc in files:
+                if fc == "cmd":
+                    # print("Dir: "+"%s/%s\n" %(root, f))
+                    # print("Fined cmd file")
+    
+                    cmdFile = open(root + "/cmd","r")
+                    testLineCount =1
+                    cmdLine = cmdFile.readline()
+                    while cmdLine != "":
+                        # print("%d TCMD Line: %s" %(testLineCount,cmdLine))
+    
+                        formatCMDLine = cmdLine.strip()
+                        
+                        if formatCMDLine != "":
+                            if formatCMDLine in fileName:
+                                
+                                flgCMDFile = True
+                                #print("Line: " + cmdLine)
+                                cmdLine = cmdFile.readline()
+    
+                                # Find all times
+                                countTime = 1
+                                while cmdLine != "":
+                                    formatCMDLine = cmdLine.strip()
+                                    if formatCMDLine =="":
+                                        pass
+                                    elif formatCMDLine[2]!=":":
+                                        break
+                                    else:
+                                        # Get Time
+                                        strTime = GetTime(formatCMDLine)
+                                        timeUnits = strTime.split(" ")
+                                        sTime = timeUnits[0]
+                                        cTime = timeUnits[1]
+                                        
+                                        # Write CMD
+                                        if ".rmvb" in f:
+                                            # Copy the to edit file to Factory
+                                            cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
+    
+                                            # Deal with Vedio Step 1 => ts
+                                            veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb " + "-ss " + sTime + " -t " + cTime + " B.ts"
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
+    
+                                            # Deal with Vedio Step 2 => mp4
+                                            veStr = "ffmpeg -i B.ts -an -vcodec copy C.mp4"
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
+    
+                                            # Deal with Audio
+                                            auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 " + "-ss " + sTime + " -t " + cTime + " D.ogg"
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(auStr))
+    
+                                            # Make mkv file
+                                            mkStr = '"mkvmerge" -o "'+editPath+'/E.mkv"  "--forced-track" "0:no" "-d" "0" "-A" "-S" "-T" \
+        "--no-global-tags" "--no-chapters" "(" "'+editPath+'/C.mp4" ")" "--forced-track" "0:no" "-a" "0" "-D" "-S" "-T" "--no-global-tags" \
+        "--no-chapters" "(" "'+editPath+'/D.ogg" ")" "--track-order" "0:0,1:0"'
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
+    
+                                            # Rename and Remove file
+                                            reStr = "mv E.mkv " + fileName + ".mkv"
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
+                                            reStr = "rm A B.ts C.mp4 D.ogg"
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+    
+                                        elif ".avi" in f:
+                                            cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                                    + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+                                            
+                                        elif ".mp4" in f:
+                                            cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                                    + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+                                        
+                                        elif ".mkv" in f:
+                                            cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                                    + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
+                                            open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+                                        
+                                    cmdLine = cmdFile.readline()
+                                    countTime += 1
+                                    
+                        testLineCount += 1
+                        cmdLine = cmdFile.readline()
+    
+            if flgCMDFile == False:
+                if ".rmvb" in f:
+                    if dealStyle == 2:
+                        
+                    
+                        # Create and Write shell code into cmd file
+                        # Copy the to be edited file to Factory
+                        cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
+
+                        # Deal with Vedio Step 1 => ts
+                        veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb B.ts"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
+        
+                        # Deal with Vedio Step 2 => mp4
+                        veStr = "ffmpeg -i B.ts -an -vcodec copy C.mp4"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
+        
+                        # Deal with Audio
+                        auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 D.ogg"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(auStr))
+        
+                        # Make mkv file
+                        mkStr = '"mkvmerge" -o "'+editPath+'/E.mkv"  "--forced-track" "0:no" "-d" "0" "-A" "-S" "-T" \
+            "--no-global-tags" "--no-chapters" "(" "/'+editPath+'/C.mp4" ")" "--forced-track" "0:no" "-a" "0" "-D" "-S" "-T" "--no-global-tags" \
+            "--no-chapters" "(" "'+editPath+'/D.ogg" ")" "--track-order" "0:0,1:0"'
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
+        
+                        # Rename and Removefile
+                        reStr = "mv E.mkv " + fileName + ".mkv"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
+                        reStr = "rm A B.ts C.mp4 D.ogg"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+
+                    elif dealStyle == 3:
+                        # Create and Write shell code into cmd file
+
+                        ##################################################
+                        # For delete pre part get the file time
+                        videoFile = "\"" + root + "/" + fileName + "\""
+                        # print("This is file name------------------------------%s" %videoFile)
+                        videoTime = GetVideoDuration(videoFile)
+                        # print(videoTime)
+                        # Calculate time after deleting pre part
+                        initTime = "00:00:15 " + videoTime
+                        strTime = GetTime(initTime)
+                        timeUnits = strTime.split(" ")
+                        sTime = timeUnits[0]
+                        cTime = timeUnits[1]
+                        
+                        ##################################################
+                        
+                        # Copy the to be edited file to Factory
+                        cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
+        
+                        # Deal with Vedio Step 1 => ts
+                        veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb " + "-ss " + sTime + " -t " + cTime + " B.ts"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
+        
+                        # Deal with Vedio Step 2 => mp4
+                        veStr = "ffmpeg -i B.ts -an -vcodec copy C.mp4"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
+        
+                        # Deal with Audio
+                        auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 " + "-ss " + sTime + " -t " + cTime + " D.ogg"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(auStr))
+        
+                        # Make mkv file
+                        mkStr = '"mkvmerge" -o "'+editPath+'/E.mkv"  "--forced-track" "0:no" "-d" "0" "-A" "-S" "-T" \
+            "--no-global-tags" "--no-chapters" "(" "/'+editPath+'/C.mp4" ")" "--forced-track" "0:no" "-a" "0" "-D" "-S" "-T" "--no-global-tags" \
+            "--no-chapters" "(" "'+editPath+'/D.ogg" ")" "--track-order" "0:0,1:0"'
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
+        
+                        # Rename and Removefile
+                        reStr = "mv E.mkv " + fileName + ".mkv"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
+                        reStr = "rm A B.ts C.mp4 D.ogg"
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
+                        open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+                        
+            testFileCount += 1
+def main():
+    # print("This is a test!!!")
+    DealFiles(3)
+            
+if __name__ == '__main__':
+    main()
