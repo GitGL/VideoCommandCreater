@@ -97,9 +97,6 @@ def DealFiles(dealStyle=1):
     '''
     Walk file path
     Deal Style
-    1: CMD file
-    2: rmvb file
-    3: rmvb file delete pre part
     '''
     for root, dirs, files in os.walk(filePath):
         
@@ -214,7 +211,7 @@ def DealFiles(dealStyle=1):
             testFileCount += 1
 def main():
     # print("This is a test!!!")
-    DealFiles(3)
+    DealFiles()
             
 if __name__ == '__main__':
     main()
