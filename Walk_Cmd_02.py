@@ -50,11 +50,14 @@ def GetTime(initTimeStr):
 
     if eSecond < sSecond:
         if (eMinute -1) < sMinute:
-            cMinute = eMinute -2 - sMinute
+            cMinute = eMinute - 1 + 60 - sMinute
         else:
-            cMinute = eMinute -1 - sMinute
+            cMinute = eMinute - 1 - sMinute
     else:
-        cMinute = eMinute - sMinute
+        if eMinute < sMinute:
+            cMinute = eMinute + 60 - sMinute
+        else:
+            cMinute = eMinute - sMinute
 
     if eSecond < sSecond:
         if (eMinute -1) < sMinute:
@@ -65,7 +68,8 @@ def GetTime(initTimeStr):
         cHour = eHour - 1 - sHour
     else:
         cHour = eHour - sHour
-
+    
+    # Format time => HH:MM:SS
     if cHour < 10:
         cHourStr = "0"+str(cHour)
     else:
