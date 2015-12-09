@@ -135,7 +135,7 @@ def DealFiles(dealStyle=1):
                         strJudge = formatCMDLine[0:2]
                         if not strJudge.isdigit():
                             # The line is filename
-                            fileNameLine = formatCMDLine
+                            video_file_name = formatCMDLine
                             
                             flgLineFileName = True
                             #print("Line: " + cmdLine)
@@ -154,7 +154,7 @@ def DealFiles(dealStyle=1):
                             cTime = timeUnits[1]
                             
                             # Write CMD
-                            if ".rmvb" in f:
+                            if ".rmvb" in video_file_name:
                                 # Copy the to edit file to Factory
                                 cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
@@ -184,19 +184,19 @@ def DealFiles(dealStyle=1):
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
-                            elif ".avi" in f:
+                            elif ".avi" in video_file_name:
                                 cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
                                 
-                            elif ".mp4" in f:
+                            elif ".mp4" in video_file_name:
                                 cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
                             
-                            elif ".mkv" in f:
+                            elif ".mkv" in video_file_name:
                                 cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
