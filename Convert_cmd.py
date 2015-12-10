@@ -90,6 +90,20 @@ def GetTime(initTimeStr):
     # print(cTime)
     return sTime+" "+cTime
 
+def TakeOffExtention(fileName, extention):
+    if extention == "rmvb":
+        newName = fileName[0:-5]
+    elif extention == "avi":
+        newName = fileName[0:-4]
+    elif extention == "mp4":
+        newName = fileName[0:-4]
+    elif extention == "mkv":
+        newName = fileName[0:-4]
+    else:
+        newName = fileName
+        
+    return newName
+
 def InitCmd():
     open(editPath+"/cmdfactory", 'w').write("")
 
@@ -157,6 +171,7 @@ def DealFiles(dealStyle=1):
                             
                             # Write CMD
                             if ".rmvb" in video_file_name:
+                                new_name = TakeOffExtention(video_file_name,"rmvb")
                                 # Copy the to edit file to Factory
                                 cpStr = "cp " + "\"" + root + "/" + video_file_name + "\"" + " " + editPath + "/" + "A"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
@@ -180,27 +195,30 @@ def DealFiles(dealStyle=1):
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
 
                                 # Rename and Remove file
-                                reStr = "mv E.mkv " + video_file_name + ".mkv"
+                                reStr = "mv E.mkv " + new_name + str(countTime) + ".mkv"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                                 reStr = "rm A B.ts C.mp4 D.ogg"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".avi" in video_file_name:
+                                new_name = TakeOffExtention(video_file_name,"avi")
                                 cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + video_file_name + "-"+str(countTime)+".mp4" + "\"" 
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".mp4" in video_file_name:
+                                new_name = TakeOffExtention(video_file_name,"mp4")
                                 cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + video_file_name + "-"+str(countTime)+".mp4" + "\"" 
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".mkv" in video_file_name:
+                                new_name = TakeOffExtention(video_file_name,"mkv")
                                 cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + video_file_name + "-"+str(countTime)+".mp4" + "\"" 
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
