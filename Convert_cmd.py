@@ -7,7 +7,7 @@ import datetime
 
 import commands
 
-filePath = "/media/hustrc/Media03/32-TV/01-Korean/[点金神手(Midas)]"
+filePath = "/media/hustrc/HD-PEU2/Girls/AV/00"
 # filePath = "/media/guolei/L-Data/TV"
 
 editPath = "/media/hustrc/LinuxData/Download/Factory"
@@ -31,7 +31,7 @@ def GetTime(initTimeStr):
     """
     # Use Split " " and ":"
     timeUnits = initTimeStr.split(" ")
-    # print(timeUnits)
+    # print("time Unit: %s" %timeUnits)
     sTime = timeUnits[0]
     eTime = timeUnits[1]
     #
@@ -98,13 +98,13 @@ def DealFiles(dealStyle=1):
     Walk file path
     Deal Style
     '''
+    InitCmd()
+        
     for root, dirs, files in os.walk(filePath):
         
         flgRmvb = False
         cmdCount = 1
         testFileCount =1
-        
-        InitCmd()
         
         for f in files:
             fileName = f
@@ -127,7 +127,7 @@ def DealFiles(dealStyle=1):
                 while cmdLine != "":
                     
                     # print("%d TCMD Line: %s" %(testLineCount,cmdLine))
-
+                    # print("cmd Line: %s" %cmdLine)
                     formatCMDLine = cmdLine.strip()
                     
                     if formatCMDLine != "":
@@ -135,6 +135,7 @@ def DealFiles(dealStyle=1):
                         strJudge = formatCMDLine[0:2]
                         if not strJudge.isdigit():
                             # The line is filename
+                            print("file Name: %s" %cmdLine)
                             video_file_name = formatCMDLine
                             
                             flgLineFileName = True
@@ -146,8 +147,9 @@ def DealFiles(dealStyle=1):
                         elif strJudge.isdigit():
                         
                             # Find all times
-
+                            print("file Time: %s" %cmdLine)
                             # Get Time
+                            
                             strTime = GetTime(formatCMDLine)
                             timeUnits = strTime.split(" ")
                             sTime = timeUnits[0]
@@ -156,7 +158,7 @@ def DealFiles(dealStyle=1):
                             # Write CMD
                             if ".rmvb" in video_file_name:
                                 # Copy the to edit file to Factory
-                                cpStr = "cp " + "\"" + root + "/" + fileName + "\"" + " " + editPath + "/" + "A"
+                                cpStr = "cp " + "\"" + root + "/" + video_file_name + "\"" + " " + editPath + "/" + "A"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
 
                                 # Deal with Vedio Step 1 => ts
@@ -178,31 +180,31 @@ def DealFiles(dealStyle=1):
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
 
                                 # Rename and Remove file
-                                reStr = "mv E.mkv " + fileName + ".mkv"
+                                reStr = "mv E.mkv " + video_file_name + ".mkv"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                                 reStr = "rm A B.ts C.mp4 D.ogg"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".avi" in video_file_name:
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
+                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + video_file_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                                
+
                             elif ".mp4" in video_file_name:
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
+                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + video_file_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                            
+
                             elif ".mkv" in video_file_name:
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + fileName + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + fileName + "-"+str(countTime)+".mp4" + "\"" 
+                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + video_file_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                            
-                            cmdLine = cmdFile.readline()
+
+                            # cmdLine = cmdFile.readline()
                             countTime += 1
                                 
                     testLineCount += 1
