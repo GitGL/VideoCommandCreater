@@ -222,6 +222,13 @@ def DealFiles(dealStyle=1):
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
+                            elif ".wmv" in video_file_name:
+                                new_name = TakeOffExtention(video_file_name,"wmv")
+                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                        + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
+                                open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
+                                open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+
                             # cmdLine = cmdFile.readline()
                             countTime += 1
                                 
