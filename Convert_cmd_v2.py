@@ -106,6 +106,8 @@ def TakeOffExtention(fileName, extention):
         newName = fileName[0:-4]
     elif extention == "mkv":
         newName = fileName[0:-4]
+    elif extention == "wmv":
+        newName = fileName[0:-4]
     else:
         newName = fileName
         
