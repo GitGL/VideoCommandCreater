@@ -20,7 +20,14 @@ def GetVideoDuration(videoFile):
     (status, output) = commands.getstatusoutput(cmd)
     # print(output)
     return output
-    
+
+def GetFilePath(fileName):
+    for root, dirs, files in os.walk(filePath):
+        
+        for f in files:
+            if f == fileName:
+                return root
+
 def GetTime(initTimeStr):
     """
     # if is "" pass
@@ -127,8 +134,9 @@ def DealFiles(dealStyle=1):
             # print("Full File Path 1: %s/%s/%s" %(root,dirs,f))
             # print("Full File Path 2: %s/%s\n" %(root,f))
             
-            # Search cmd file
+            # Search Cmd file
             if fileName == "cmd":
+
                 cmdFile = open(root + "/cmd","r")
                 testLineCount =1    # the count number of line in cmd file
                 cmdLine = cmdFile.readline()
@@ -153,7 +161,10 @@ def DealFiles(dealStyle=1):
                             #print("Line: " + cmdLine)
                 
                             # cmdLine = cmdFile.readline()
-                            countTime = 1   # 
+                            countTime = 1
+                            
+                            # Get file path
+                            file_path = GetFilePath(video_file_name)
                             
                         elif strJudge.isdigit():
                         
@@ -170,7 +181,7 @@ def DealFiles(dealStyle=1):
                             if ".rmvb" in video_file_name:
                                 new_name = TakeOffExtention(video_file_name,"rmvb")
                                 # Copy the to edit file to Factory
-                                cpStr = "cp " + "\"" + root + "/" + video_file_name + "\"" + " " + editPath + "/" + "A"
+                                cpStr = "cp " + "\"" + file_path + "/" + video_file_name + "\"" + " " + editPath + "/" + "A"
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
 
                                 # Deal with Vedio Step 1 => ts
@@ -200,28 +211,28 @@ def DealFiles(dealStyle=1):
 
                             elif ".avi" in video_file_name:
                                 new_name = TakeOffExtention(video_file_name,"avi")
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                cmStr = "ffmpeg -i " + "\"" + file_path + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".mp4" in video_file_name:
                                 new_name = TakeOffExtention(video_file_name,"mp4")
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                cmStr = "ffmpeg -i " + "\"" + file_path + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".mkv" in video_file_name:
                                 new_name = TakeOffExtention(video_file_name,"mkv")
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                cmStr = "ffmpeg -i " + "\"" + file_path + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
 
                             elif ".wmv" in video_file_name:
                                 new_name = TakeOffExtention(video_file_name,"wmv")
-                                cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                cmStr = "ffmpeg -i " + "\"" + file_path + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
                                         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
