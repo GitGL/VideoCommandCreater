@@ -117,6 +117,6 @@ $ ffmpeg -i infile -ss 00:03:03 -vframes 1 -s 800*600 -f image2  outfile.jpg
 $ ffmpeg -i "infile.mp4" -r 1 -q:v 2 -f image2 image-3%d.jpeg
 '''
 
-mp = VideoPic('00:00:00.000','/media/guolei/L-Data/Download/[Harmony].mp4',30,50)
-mp.InitCmdFile()
-mp.CaptureImage()
+# mp = VideoPic('00:00:00.000','/media/guolei/L-Data/Download/[Harmony].mp4',30,50)
+# mp.InitCmdFile()
+# mp.CaptureImage()
