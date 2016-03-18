@@ -4,10 +4,12 @@
 import VideoPic
 
 def main():
+    
+    mp = VideoPic.VideoPic()
+
     mp.InitCmdFile()
 
-    mp = VideoPic.VideoPic("00:00:00:.001","china-x",30,30)
-    mp.CaptureImage()
+    mp.CaptureImage("01:06:19.001","/media/hustrc/LinuxData/Download/Video/[The.Extreme.Fox].2014.mkv",30,30)
             
 if __name__ == '__main__':
     main()

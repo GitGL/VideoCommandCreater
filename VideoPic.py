@@ -2,23 +2,25 @@
 # -*- coding: utf8 -*-
 
 class VideoPic(object):
-    def __init__(self, time_start = "", video_name = "", img_count = 30, intervalTime = 1):
-        '''
-        intervalTime : Unit: millisecond
-        '''
-        self.time_start = time_start # "00:00:00.001"
-        self.video_name = video_name # "na"
-        self.image_count = img_count # 100
-        #self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
-        self.edit_path = "/media/guolei/L-Data/Download"
-        self.intervalTime = intervalTime
+    def __init__(self):
+
+        self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
+        #self.edit_path = "/media/guolei/L-Data/Download"
         self.file_cmd = "/media/hustrc/LinuxData/Download/Factory"
         
     def InitCmdFile(self):
         open(self.edit_path+"/cmdfactory", 'w').write("")
         
-    def CaptureImage(self):
+    def CaptureImage(self, time_start = "", video_name = "", img_count = 30, intervalTime = 1):
         
+	"""
+        intervalTime : Unit: millisecond
+	"""
+        self.time_start = time_start # "00:00:00.001"
+        self.video_name = video_name # "na"
+        self.image_count = img_count # 100
+        self.intervalTime = intervalTime
+
         img_number = 1
         
         while img_number <= self.image_count:
