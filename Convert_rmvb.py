@@ -41,7 +41,7 @@ def GetTime(initTimeStr):
     sMinute = int(sTime[3:5])
     sSecond = int(sTime[6:8])
     
-    print(eTime)
+    # print(eTime)
     eHour = int(eTime[0:2])
     eMinute = int(eTime[3:5])
     eSecond = int(eTime[6:8])
@@ -101,13 +101,13 @@ def DealFiles(preTime):
     Walk file path
     Deal Style
     '''
+    InitCmd()
+        
     for root, dirs, files in os.walk(filePath):
         flgCMD = False
         flgRmvb = False
         cmdCount = 1
         testFileCount =1
-        
-        InitCmd()
         
         for f in files:
             fileName = f
