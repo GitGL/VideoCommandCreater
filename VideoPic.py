@@ -6,8 +6,8 @@ import commands
 class VideoPic(object):
     def __init__(self):
 
-        #self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
-        self.edit_path = "/media/guolei/L-Data/Download"
+        self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
+        #self.edit_path = "/media/guolei/L-Data/Download"
         self.file_cmd = "/media/hustrc/LinuxData/Download/Factory"
         
     def InitCmdFile(self):
@@ -20,10 +20,10 @@ class VideoPic(object):
         nameNoExtention = nameFull[:nameFull.rfind(".")]
         
         # Write CMD
-        cmd_space = "mkdir " + nameNoExtention
+        cmd_space = "mkdir " + "\"" + nameNoExtention + "\""
         open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
         
-        cmd_space = "cd " + nameNoExtention
+        cmd_space = "cd " + "\"" + nameNoExtention + "\""
         open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
 
 
@@ -152,7 +152,7 @@ class VideoPic(object):
             image_name = image_name + ".jpg"
             
             # Write CMD
-            cmd_cap_img = "ffmpeg -i " + video_name + " -f image2 -ss " + time_img + " -t 0.001 " + image_name
+            cmd_cap_img = "ffmpeg -i " + "\"" + video_name + "\"" + " -f image2 -ss " + time_img + " -t 0.001 " + image_name
             open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_cap_img))
             
             time_img = self.IncreaseIntervalTime(time_img,intervalTime)

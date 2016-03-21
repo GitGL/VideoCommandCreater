@@ -7,7 +7,7 @@ import datetime
 
 import commands
 
-filePath = "/media/hustrc/HD-PEU2/Girls/AV/00"
+filePath = "/media/hustrc/LinuxData/Download/Video"
 # filePath = "/media/guolei/L-Data/TV"
 
 editPath = "/media/hustrc/LinuxData/Download/Factory"
