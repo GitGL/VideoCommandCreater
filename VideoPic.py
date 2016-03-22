@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 import commands
+import os
 
 class VideoPic(object):
     def __init__(self):
@@ -18,14 +19,14 @@ class VideoPic(object):
         
         nameFull = name[name.rfind("/")+1:]
         nameNoExtention = nameFull[:nameFull.rfind(".")]
-        
-        # Write CMD
-        cmd_space = "mkdir " + "\"" + nameNoExtention + "\""
-        open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
+
+        if not os.path.exists("nameNoExtention"):
+            # Write CMD
+            cmd_space = "mkdir " + "\"" + nameNoExtention + "\""
+            open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
         
         cmd_space = "cd " + "\"" + nameNoExtention + "\""
         open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
-
 
     def QuitIndependentSpace(self):
         path = self.edit_path
