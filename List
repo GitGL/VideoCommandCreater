@@ -1,0 +1,8 @@
+if time == "" then:
+    all video > images
+
+if time != "" then:
+    setp 1: create adependent space
+    step 2: cut video
+    step 3: all video > images
+
