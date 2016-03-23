@@ -1,20 +1,35 @@
 # -t 
-ffmpeg -ss 00:03:03 -i infile -t 0.001 -s 800*600 -f image2  outfile.jpg
-ffmpeg -ss 00:03:03 -i infile -t 3 -s 800*600 -f image2  %3d.jpg
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -t 0.001 -s 800*600 -f image2  %3d.jpg
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -t 0.002 -s 800*600 -f image2  o2.jpg
+# same
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -t 3 -s 800*600 -f image2  %3d.jpg
+# 001.jpg-072.jpg
+# 72/3=24
 
 # -t -r
-ffmpeg -ss 10:00 -i input -f image2 -r 0.2 -t 3 %3d.jpg
-#ffmpeg -ss 10:00 -i input -f image2 -r 0.2 -t 3 %%3d.jpg
+ffmpeg -ss 10:00 -i "E01[The Angels' Second Advent].mkv" -f image2 -r 1 -t 3 %3d.jpg
+# 001.jpg-003.jpg
+
+ffmpeg -ss 10:00 -i "E01[The Angels' Second Advent].mkv" -f image2 -r 0.2 -t 10 %3d.jpg
+# 001.jpg-002.jpg
 
 # vframes
-ffmpeg -ss 00:03:03 -i infile -vframes 1 -s 800*600 -f image2 outfile.jpg
-ffmpeg -ss 00:03:03 -i infile -vframes 2 -s 800*600 -f image2 outfile.jpg
-ffmpeg -ss 00:03:03 -i infile -vframes 3 -s 800*600 -f image2 outfile.jpg
-ffmpeg -ss 00:03:03 -i infile -vframes 10 -s 800*600 -f image2 outfile.jpg
-ffmpeg -ss 00:03:03 -i infile -vframes 20 -s 800*600 -f image2 outfile.jpg
-ffmpeg -ss 00:03:03 -i infile -vframes 30 -s 800*600 -f image2 outfile.jpg
-#ffmpeg -ss 00:03:03 -i infile -vframes 1000 -s 800*600 -f image2 outfile.jpg
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -vframes 1 -f image2 %3d.jpg
+# 001.jpg
+
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -vframes 2 -f image2 %3d.jpg
+# 001.jpg-002.jpg
+
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -vframes 3 -f image2 %3d.jpg
+# 001.jpg-003.jpg
+
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -vframes 10 -f image2 %3d.jpg
+# 001.jpg-010.jpg
 
 # -q:v
-ffmpeg -i "infile.mp4" -r 1 -q:v 2 -f image2 image-3%d.jpeg
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -r 1 -q:v 2 -f image2 image-3%d.jpeg
+# 144.8kB
+
+ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -r 1 -f image2 image-3%d.jpeg
+# 81.5kB
 
