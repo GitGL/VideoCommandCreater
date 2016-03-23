@@ -10,6 +10,12 @@ ffmpeg -ss 00:03:03 -i "E01[The Angels' Second Advent].mkv" -t 3 -s 800*600 -f i
 ffmpeg -ss 10:00 -i "E01[The Angels' Second Advent].mkv" -f image2 -r 1 -t 3 %3d.jpg
 # 001.jpg-003.jpg
 
+ffmpeg -ss 10:00 -i "E01[The Angels' Second Advent].mkv" -f image2 -r 2 -t 3 %3d.jpg
+# 001.jpg-006.jpg
+
+ffmpeg -ss 10:00 -i "E01[The Angels' Second Advent].mkv" -f image2 -r 2 -t 1 %3d.jpg
+# 001.jpg-002.jpg
+
 ffmpeg -ss 10:00 -i "E01[The Angels' Second Advent].mkv" -f image2 -r 0.2 -t 10 %3d.jpg
 # 001.jpg-002.jpg
 
