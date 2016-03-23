@@ -7,9 +7,9 @@ import os
 class VideoPic(object):
     def __init__(self):
 
-        self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
-        #self.edit_path = "/media/guolei/L-Data/Download"
-        self.file_cmd = "/media/hustrc/LinuxData/Download/Factory"
+        #self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
+        self.edit_path = "/media/guolei/L-Data/Download"
+        #self.file_cmd = "/media/hustrc/LinuxData/Download/Factory"
         
     def InitCmdFile(self):
         open(self.edit_path+"/cmdfactory", 'w').write("")
@@ -26,6 +26,21 @@ class VideoPic(object):
             open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
         
         cmd_space = "cd " + "\"" + nameNoExtention + "\""
+        open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
+
+    def CreateIndependentSpacebyPart(self, part_number):
+        path = self.edit_path
+        
+        if part_number < 10:
+            str_part_number = "00" + str(part_number)
+        else:
+            str_part_number = "0" + str(part_number)
+
+        # Write CMD
+        cmd_space = "mkdir " + "\"" + str_part_number + "\""
+        open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
+        
+        cmd_space = "cd " + "\"" + str_part_number + "\""
         open(path+"/cmdfactory", 'a').write("%s \n" %(cmd_space))
 
     def QuitIndependentSpace(self):
@@ -123,52 +138,95 @@ class VideoPic(object):
         elif self.TransformTimeToSecond(time2) <= self.TransformTimeToSecond(time1):
             return False
     
-    def CaptureImage(self, time_start, time_end, video_name, img_count = 30, intervalTime = 250, copyFlag=0):
+    def CaptureImage(self, cmd_path):
         
         """
         intervalTime : Unit: millisecond
         time_start # "00:00:00.001"
         """
+        editPath = self.edit_path
         
-        if time_end =="":
-            video_duration = self.GetVideoDuration(video_name)
-            time_end = video_duration
-                
-        self.CreateIndependentSpace(video_name)
-        
-        if copyFlag == 1:
-            # Copy the to be edited file to Factory
-            cmd_copy = "cp " + "\"" + video_name + "\"" + " " + self.edit_path + "/" + "A"
-            open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_copy))
-            
-            video_name = "A"
-        
-        time_img = time_start
+        cmdFile = open(cmd_path,"r")
 
-        while self.CompareTime(time_img,time_end):
-            
-            # Image Name
-            time_parts = time_img.split(":")
-            image_name = "_".join(time_parts)
-            image_name = image_name + ".jpg"
-            
-            # Write CMD
-            cmd_cap_img = "ffmpeg -i " + "\"" + video_name + "\"" + " -f image2 -ss " + time_img + " -t 0.001 " + image_name
-            open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_cap_img))
-            
-            time_img = self.IncreaseIntervalTime(time_img,intervalTime)
-
-        if copyFlag == 1:
-            # Removefile
-            cmd_remove = "rm A"
-            open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_remove))
-            
-        self.QuitIndependentSpace()
+        cmdLine = cmdFile.readline()
         
-'''
-$ ffmpeg -i test.avi -f image2 -ss 00:00:01 -t 0.001 test.jpg
-'''
+        lineNumber = 1    # the count number of line in cmd file
+        file_count = 0
 
-# mp = VideoPic('00:00:00.000','00:01:00:000','/media/guolei/L-Data/Download/[Harmony].mp4',30,50)
-# mp.InitCmdFile()
-# mp.CaptureImage()
+        while cmdLine != "":
+            
+            formatCMDLine = cmdLine.strip()
+            
+            if formatCMDLine != "":
+                # Judge is filename or time
+                if formatCMDLine[0:1] == "/":
+                    # The line is filename
+                    video_file_name = formatCMDLine
+                    file_count += 1
+                    
+                    time_count = 0
+                    
+                    if file_count != 1:
+                        self.QuitIndependentSpace()
+
+                    # Write CMD
+                    # Create independent space by file
+                    self.CreateIndependentSpace(video_file_name)
+                        
+                elif formatCMDLine[0:1].isdigit():
+                    
+                    time_count += 1
+                    # Find all times
+                    time_parts = formatCMDLine.split(" ")
+                    time_start = time_parts[0]
+                    time_duration = time_parts[1]
+                    
+                    # Write CMD
+                    # Create independent space by part
+                    self.CreateIndependentSpacebyPart(time_count)
+                    
+                    cmd_ffmpeg = "ffmpeg -ss " + time_start + " -i " + "\"" + video_file_name + "\"" + " -f image2 -r 4 -t " + time_duration + " %3d.jpg"
+                    open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmd_ffmpeg))
+                    open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+                    
+                    self.QuitIndependentSpace()
+                    
+            cmdLine = cmdFile.readline()
+            
+            lineNumber += 1
+        
+            # if time_end =="":
+            #     video_duration = self.GetVideoDuration(video_name)
+            #     time_end = video_duration
+            #         
+            # self.CreateIndependentSpace(video_name)
+            # 
+            # if copyFlag == 1:
+            #     # Copy the to be edited file to Factory
+            #     cmd_copy = "cp " + "\"" + video_name + "\"" + " " + self.edit_path + "/" + "A"
+            #     open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_copy))
+            #     
+            #     video_name = "A"
+            # 
+            # time_img = time_start
+            # 
+            # while self.CompareTime(time_img,time_end):
+            #     
+            #     # Image Name
+            #     time_parts = time_img.split(":")
+            #     image_name = "_".join(time_parts)
+            #     image_name = image_name + ".jpg"
+            #     
+            #     # Write CMD
+            #     cmd_cap_img = "ffmpeg -i " + "\"" + video_name + "\"" + " -f image2 -ss " + time_img + " -t 0.001 " + image_name
+            #     open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_cap_img))
+            #     
+            #     time_img = self.IncreaseIntervalTime(time_img,intervalTime)
+            # 
+            # if copyFlag == 1:
+            #     # Removefile
+            #     cmd_remove = "rm A"
+            #     open(self.edit_path+"/cmdfactory", 'a').write("%s \n" %(cmd_remove))
+            #     
+            # self.QuitIndependentSpace()
+            # 
