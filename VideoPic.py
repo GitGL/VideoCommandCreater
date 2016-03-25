@@ -144,57 +144,66 @@ class VideoPic(object):
         intervalTime : Unit: millisecond
         time_start # "00:00:00.001"
         """
+        
         editPath = self.edit_path
+
+        for root, dirs, files in os.walk(cmd_path):
         
-        cmdFile = open(cmd_path,"r")
-
-        cmdLine = cmdFile.readline()
-        
-        lineNumber = 1    # the count number of line in cmd file
-        file_count = 0
-
-        while cmdLine != "":
-            
-            formatCMDLine = cmdLine.strip()
-            
-            if formatCMDLine != "":
-                # Judge is filename or time
-                if formatCMDLine[0:1] == "/":
-                    # The line is filename
-                    video_file_name = formatCMDLine
-                    file_count += 1
+            for f in files:
+                # Search cmd file
+                if f == "cmd":
                     
-                    time_count = 0
+                    cmdFile = open(root + "/cmd","r")
                     
-                    if file_count != 1:
-                        self.QuitIndependentSpace()
-
-                    # Write CMD
-                    # Create independent space by file
-                    self.CreateIndependentSpace(video_file_name)
+                    # cmdFile = open(cmd_path,"r")
+            
+                    cmdLine = cmdFile.readline()
+                    
+                    lineNumber = 1    # the count number of line in cmd file
+                    file_count = 0
+            
+                    while cmdLine != "":
                         
-                elif formatCMDLine[0:1].isdigit():
-                    
-                    time_count += 1
-                    # Find all times
-                    time_parts = formatCMDLine.split(" ")
-                    time_start = time_parts[0]
-                    time_duration = time_parts[1]
-                    
-                    # Write CMD
-                    # Create independent space by part
-                    self.CreateIndependentSpacebyPart(time_count)
-                    
-                    cmd_ffmpeg = "ffmpeg -ss " + time_start + " -i " + "\"" + video_file_name + "\"" + " -f image2 -r 4 -t " + time_duration + " %3d.jpg"
-                    open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmd_ffmpeg))
-                    open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
-                    
-                    self.QuitIndependentSpace()
-                    
-            cmdLine = cmdFile.readline()
+                        formatCMDLine = cmdLine.strip()
+                        
+                        if formatCMDLine != "":
+                            # Judge is filename or time
+                            if formatCMDLine[0:1] == "/":
+                                # The line is filename
+                                video_file_name = formatCMDLine
+                                file_count += 1
+                                
+                                time_count = 0
+                                
+                                if file_count != 1:
+                                    self.QuitIndependentSpace()
             
-            lineNumber += 1
-        
+                                # Write CMD
+                                # Create independent space by file
+                                self.CreateIndependentSpace(video_file_name)
+                                    
+                            elif formatCMDLine[0:1].isdigit():
+                                
+                                time_count += 1
+                                # Find all times
+                                time_parts = formatCMDLine.split(" ")
+                                time_start = time_parts[0]
+                                time_duration = time_parts[1]
+                                
+                                # Write CMD
+                                # Create independent space by part
+                                self.CreateIndependentSpacebyPart(time_count)
+                                
+                                cmd_ffmpeg = "ffmpeg -ss " + time_start + " -i " + "\"" + video_file_name + "\"" + " -f image2 -r 4 -t " + time_duration + " %3d.jpg"
+                                open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmd_ffmpeg))
+                                open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
+                                
+                                self.QuitIndependentSpace()
+                                
+                        cmdLine = cmdFile.readline()
+                        
+                        lineNumber += 1
+            
             # if time_end =="":
             #     video_duration = self.GetVideoDuration(video_name)
             #     time_end = video_duration
