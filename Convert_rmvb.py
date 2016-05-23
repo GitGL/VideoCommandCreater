@@ -116,7 +116,7 @@ def DealFiles(preTime):
             # fullFilePath = root + "/" + f
             # print("Full File Path: %s" %(fullFilePath))
 
-            if ".rmvb" in fileName:
+            if (".rmvb" in fileName) or (".rm" in fileName):
                 
                 fullFilePath = root + "/" + fileName
                 print("Full File Path: %s" %(fullFilePath))
