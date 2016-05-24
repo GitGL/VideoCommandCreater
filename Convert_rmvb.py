@@ -198,7 +198,7 @@ def DealFiles(preTime):
                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
 
                 # Rename and Removefile
-                reStr = "mv E.mkv " + fileNameNoExtendName + ".mkv"
+                reStr = "mv E.mkv " + "\"" + fileNameNoExtendName + ".mkv" + "\"" 
                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                 reStr = "rm A B.ts C.mp4 D.ogg"
                 open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
