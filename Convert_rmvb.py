@@ -121,7 +121,10 @@ def DealFiles(preTime):
                 fullFilePath = root + "/" + fileName
                 print("Full File Path: %s" %(fullFilePath))
                 
-                fileNameNoExtendName = fileName[0:len(fileName)-5]
+                if fileName[-2:] == "rm":
+                    fileNameNoExtendName = fileName[0:len(fileName)-3]    
+                elif fileName[-2:] == "vb":
+                    fileNameNoExtendName = fileName[0:len(fileName)-5]
                 '''
                 if dealStyle == 2:
                 

@@ -7,8 +7,8 @@ import os
 class VideoPic(object):
     def __init__(self):
 
-        #self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
-        self.edit_path = "/media/guolei/L-Data/Download"
+        self.edit_path = "/media/hustrc/LinuxData/Download/Factory"
+        #self.edit_path = "/media/guolei/L-Data/Download"
         #self.file_cmd = "/media/hustrc/LinuxData/Download/Factory"
         
     def InitCmdFile(self):
@@ -141,6 +141,12 @@ class VideoPic(object):
     def CaptureImage(self, cmd_path):
         
         """
+        cmd file struction
+        /videopath/videoname
+        00:00:00 10
+        start time: 00:00:00
+        last time: 10 second
+        
         intervalTime : Unit: millisecond
         time_start # "00:00:00.001"
         """
