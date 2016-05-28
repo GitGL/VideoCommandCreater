@@ -7,7 +7,7 @@ import datetime
 
 import commands
 
-filePath = "/media/hustrc/HD-PEU2/Girls/AV"
+filePath = "/media/hustrc/GL/TV"
 # filePath = "/media/guolei/L-Data/TV"
 
 editPath = "/media/hustrc/LinuxData/Download/Factory"
@@ -96,6 +96,8 @@ def GetTime(initTimeStr):
 def TakeOffExtention(fileName, extention):
     if extention == "rmvb":
         newName = fileName[0:-5]
+    elif extention == "rm":
+        newName = fileName[0:-3]    
     elif extention == "avi":
         newName = fileName[0:-4]
     elif extention == "mp4":
@@ -112,6 +114,27 @@ def TakeOffExtention(fileName, extention):
 def InitCmd():
     open(editPath+"/cmdfactory", 'w').write("")
 
+def JudLine(strLine):
+    """
+    Judge the string is file name or time
+    if file name return 0
+    if time return 1
+    """
+    if strLine[-5:] == ".rmvb":
+        return 0
+    elif strLine[-3:] == ".rm":  
+        return 0
+    elif strLine[-4:] == ".avi":
+        return 0
+    elif strLine[-4:] == ".mp4":
+        return 0
+    elif strLine[-4:] == ".mkv":
+        return 0
+    elif strLine[-4:] == ".wmv":
+        return 0
+    elif strLine[0:2].isdigit() and strLine[2:3] == ":":
+        return 1
+    
 def DealFiles(dealStyle=1):
     '''
     Walk file path
@@ -119,7 +142,8 @@ def DealFiles(dealStyle=1):
     '''
     try:
         InitCmd()
-            
+        video_file_name =""
+                
         for root, dirs, files in os.walk(filePath):
             
             flgRmvb = False
@@ -147,8 +171,8 @@ def DealFiles(dealStyle=1):
                         
                         if formatCMDLine != "":
                             # Judge is filename or time
-                            strJudge = formatCMDLine[0:2]
-                            if not strJudge.isdigit():
+                            
+                            if JudLine(formatCMDLine) == 0:
                                 # The line is filename
                                 # print("file Name: %s" %cmdLine)
                                 video_file_name = formatCMDLine
@@ -158,9 +182,7 @@ def DealFiles(dealStyle=1):
                     
                                 # cmdLine = cmdFile.readline()
                                 countTime = 1   # 
-                                
-                            elif strJudge.isdigit():
-                            
+                            elif JudLine(formatCMDLine) == 1:    
                                 # Find all times
                                 # print("file Time: %s" %cmdLine)
                                 # Get Time
@@ -171,8 +193,12 @@ def DealFiles(dealStyle=1):
                                 cTime = timeUnits[1]
                                 
                                 # Write CMD
-                                if ".rmvb" in video_file_name:
-                                    new_name = TakeOffExtention(video_file_name,"rmvb")
+                                if (".rmvb" in video_file_name) or (".rm" in video_file_name):
+                                    if video_file_name[-2:] == "rm":
+                                        new_name = TakeOffExtention(video_file_name,"rm")
+                                    elif video_file_name[-2:] == "vb":
+                                        new_name = TakeOffExtention(video_file_name,"rmvb")
+
                                     # Copy the to edit file to Factory
                                     cpStr = "cp " + "\"" + root + "/" + video_file_name + "\"" + " " + editPath + "/" + "A"
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
@@ -196,7 +222,7 @@ def DealFiles(dealStyle=1):
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(mkStr))
     
                                     # Rename and Remove file
-                                    reStr = "mv E.mkv " + new_name + str(countTime) + ".mkv"
+                                    reStr = "mv E.mkv " + new_name + "-" + str(countTime) + ".mkv"
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
                                     reStr = "rm A B.ts C.mp4 D.ogg"
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(reStr))
