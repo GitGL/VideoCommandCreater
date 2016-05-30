@@ -7,7 +7,7 @@ import datetime
 
 import commands
 
-filePath = "/media/hustrc/GL/TV"
+filePath = "/media/hustrc/Movie"
 # filePath = "/media/guolei/L-Data/TV"
 
 editPath = "/media/hustrc/LinuxData/Download/Factory"
@@ -204,7 +204,8 @@ def DealFiles(dealStyle=1):
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(cpStr))
     
                                     # Deal with Vedio Step 1 => ts
-                                    veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb " + "-ss " + sTime + " -t " + cTime + " B.ts"
+                                    # veStr = "ffmpeg -i A -an -vcodec libx264 -vbsf h264_mp4toannexb " + "-ss " + sTime + " -t " + cTime + " B.ts"
+                                    veStr = "ffmpeg " + "-ss " + sTime + " -i A -an -vcodec libx264 -vbsf h264_mp4toannexb " + " -t " + cTime + " B.ts"
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
     
                                     # Deal with Vedio Step 2 => mp4
@@ -212,7 +213,8 @@ def DealFiles(dealStyle=1):
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(veStr))
     
                                     # Deal with Audio
-                                    auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 " + "-ss " + sTime + " -t " + cTime + " D.ogg"
+                                    # auStr = "ffmpeg -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 " + "-ss " + sTime + " -t " + cTime + " D.ogg"
+                                    auStr = "ffmpeg " + "-ss " + sTime + " -i A -vn -f ogg -acodec libvorbis -ac 2 -ab 128k -ar 44100 " + " -t " + cTime + " D.ogg"
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(auStr))
     
                                     # Make mkv file
@@ -230,29 +232,31 @@ def DealFiles(dealStyle=1):
     
                                 elif ".avi" in video_file_name:
                                     new_name = TakeOffExtention(video_file_name,"avi")
-                                    cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                            + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
+                                    # cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
+                                    #         + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
+                                    cmStr = "ffmpeg " + "-ss " + sTime + " -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 " \
+                                            + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
     
                                 elif ".mp4" in video_file_name:
                                     new_name = TakeOffExtention(video_file_name,"mp4")
-                                    cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                            + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
+                                    cmStr = "ffmpeg " + "-ss " + sTime + " -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 " \
+                                            + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
     
                                 elif ".mkv" in video_file_name:
                                     new_name = TakeOffExtention(video_file_name,"mkv")
-                                    cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                            + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
+                                    cmStr = "ffmpeg " + "-ss " + sTime + " -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 " \
+                                            + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
     
                                 elif ".wmv" in video_file_name:
                                     new_name = TakeOffExtention(video_file_name,"wmv")
-                                    cmStr = "ffmpeg -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 -ss " \
-                                            + sTime + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
+                                    cmStr = "ffmpeg " + "-ss " + sTime + " -i " + "\"" + root + "/" + video_file_name + "\"" + " -f mp4 -acodec libfdk_aac -vcodec libx264 " \
+                                            + " -t " + cTime + " " + "\"" + editPath + "/" + new_name + "-"+str(countTime)+".mp4" + "\"" 
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(cmStr))
                                     open(editPath+"/cmdfactory", 'a').write("%s \n" %(""))
     
